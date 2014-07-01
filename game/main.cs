@@ -1,6 +1,11 @@
 exec("./playGui.gui");
 exec("./materials.cs");
 exec("./datablocks.cs");
+exec("metrics/main.cs");
+exec("./ai.cs");
+
+$pref::PSSM::smallestVisiblePixelSize = 10;
+$pref::Shadows::filterMode = "SoftShadowHighQuality";
 
 //-----------------------------------------------------------------------------
 // Called when all datablocks have been transmitted.
@@ -10,14 +15,14 @@ function GameConnection::onEnterGame(%this) {
       camVel = "0 0 0";
       camForce = "0 0 0";
    };
-   TheCamera.setTransform("0 0 25 1 0 0 0");
+   TheCamera.setTransform("-98.0393 162.685 20 1 0 0 0");
    TheCamera.scopeToClient(%this);
    GameGroup.add(TheCamera);
 
    new Player(TheMonster) {
-      datablock = MonsterData;
-      position = "0 20 0";
+      datablock = Monster;
    };
+   TheMonster.setTransform("-93.4728 141.151 0 1 0 0 0");
    GameGroup.add(TheMonster);
 
    %this.setControlObject(TheMonster);
@@ -25,11 +30,15 @@ function GameConnection::onEnterGame(%this) {
    TheCamera.setTrackObject(TheMonster);
    %this.setFirstPerson(false);
 
-   PlayGui.noCursor = true;
+   //PlayGui.noCursor = true;
    Canvas.setContent(PlayGui);
    activateDirectInput();
 
    setupControls();
+
+   if($prefs::graphics $= High) {
+      MLAAFx.enable();
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -41,11 +50,13 @@ function setupControls() {
    MoveMap.bind("keyboard", "d", right);
    MoveMap.push();
 
-   schedule(10, 0, movementSchedule);
+   $MovementHz = 50;
+   $MovementMillis = 1000 / $MovementHz;
+   schedule($MovementMillis, 0, movementSchedule);
 }
 
 function movementSchedule() {
-   schedule(10, 0, movementSchedule);
+   schedule($MovementMillis, 0, movementSchedule);
    updateMovement();
    updateCamera();
 }
@@ -70,7 +81,7 @@ function updateCamera() {
       TheCamera.camForce = VectorScale(%diff, %dist - 22);
    }
    TheCamera.camForce = VectorAdd(TheCamera.camForce, VectorScale(TheCamera.camVel, -1));
-   %position = VectorAdd(TheCamera.getPosition(), VectorScale(TheCamera.camVel, 0.01));
+   %position = VectorAdd(TheCamera.getPosition(), VectorScale(TheCamera.camVel, 1 / $MovementHz));
    TheCamera.setTransform(%position SPC getWords(TheCamera.getTransform(), 3, 6));
    TheCamera.camVel = VectorAdd(TheCamera.camVel, VectorScale(TheCamera.camForce, 1/50));
 }
@@ -93,51 +104,27 @@ function getCameraAxes() {
 
 //-----------------------------------------------------------------------------
 function onStart() {
-   new SimGroup(GameGroup) {
-      new LevelInfo(TheLevelInfo) {
-         canvasClearColor = "Black";
-         fogColor = "Black";
-         visibleDistance = 1000;
-         fogDensity = 0.01;
-         fogDensityOffset = 10;
-      };
-      new GroundPlane(TheGround) {
-         material = GroundMaterial;
-      };
-      new WaterPlane(TheSwamp) {
-         position = "0 0 3.1";
-         viscosity = 0;
-         rippleTex = "art/ripple.dds";
-         specularColor = "Gray";
-         specularPower = 250;
-         rippleDir[0] = "0 1";
-         rippleSpeed[0] = 0.005;
-         rippleTexScale[0] = "40 40";
-         rippleDir[1] = "1 1";
-         rippleSpeed[1] = 0.006;
-         rippleTexScale[1] = "40 40";
-         overallRippleMagnitude = 1;
-         clarity = 0;
-         reflectivity = 0;
-      };
-      new Sun(TheSun) {
-         azimuth = 230;
-         elevation = 45;
-         color = "0.3 0.3 0.3";
-         ambient = "0 0.1 0";
-         castShadows = true;
-      };
-      new TSStatic(Level) {
-         shapeName = "art/level.dae";
-         position = "0 0 3";
-         collisionType = "Visible Mesh";
-      };
-      new TSStatic(LevelDetails) {
-         shapeName = "art/level_details.dae";
-         position = "0 0 3";
-         collisionType = "None";
-      };
-   };
+   exec("./level.cs");
+
+   // Spawn AI characters
+   %locations =
+      "-65 114 6" NL
+      "-74 114 6" NL
+      "-76 100 6" NL
+      "" NL
+      "" NL
+      "" NL
+      "";
+   %count = getRecordCount(%locations);
+   for(%i = 0; %i < %count; %i++) {
+      %pos = getRecord(%locations, %i);
+      if(getWordCount(%pos) == 3) {
+         GameGroup.add(new AIPlayer() {
+            datablock = Tourist;
+            position = %pos;
+         });
+      }
+   }
 }
 
 //-----------------------------------------------------------------------------

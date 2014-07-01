@@ -1,3 +1,5 @@
+exec("prefs.cs");
+
 // Display a splash window immediately to improve app responsiveness before
 // engine is initialized and main window created
 displaySplashWindow("splash.bmp");
@@ -17,10 +19,12 @@ createCanvas("Monster mash");
 
 // Start rendering and stuff.
 initRenderManager();
-initLightingSystems("Advanced Lighting"); 
-
-// Start PostFX. If you use "Advanced Lighting" above, uncomment this.
-initPostEffects();
+if($prefs::graphics $= "High") {
+   initLightingSystems("Advanced Lighting"); 
+   initPostEffects();
+} else {
+   initLightingSystems("Basic Lighting"); 
+}
 
 // Start audio.
 sfxStartup();
