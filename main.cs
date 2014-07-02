@@ -36,12 +36,8 @@ function onGhostAlwaysObjectReceived() {}
 function onGhostAlwaysStarted() {}
 function updateTSShapeLoadProgress() {}
 
-//-----------------------------------------------------------------------------
-// Load console.
-exec("console/main.cs");
-
 // Load up game code.
-exec("game/main.cs");
+exec("scripts/game/main.cs");
 
 // Called when we connect to the local game.
 function GameConnection::onConnect(%this) {

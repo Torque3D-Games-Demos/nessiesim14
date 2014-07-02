@@ -1,4 +1,4 @@
-exec("stateMachine/main.cs");
+exec("scripts/stateMachine/main.cs");
 // Convenience function!
 function makeSM(%type, %obj) {
    %parent = %type @ SM;
@@ -10,7 +10,7 @@ function makeSM(%type, %obj) {
    return %sm;
 }
 
-exec("events/main.cs");
+exec("scripts/events/main.cs");
 // Events relevant to the monster's actions.
 eventQueue(Monster);
 event(Monster, Attack);

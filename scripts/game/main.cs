@@ -1,5 +1,6 @@
-exec("metrics/main.cs");
-exec("profiling/main.cs");
+exec("scripts/metrics/main.cs");
+exec("scripts/profiling/main.cs");
+exec("scripts/console/main.cs");
 
 exec("./playGui.gui");
 exec("./materials.cs");
