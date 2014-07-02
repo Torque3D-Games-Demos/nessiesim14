@@ -10,7 +10,7 @@ new SimGroup(GameGroup) {
       material = Black;
    };
    new WaterPlane(TheSwamp) {
-      position = "0 0 3.0";
+      position = "0 0 3";
       rippleTex = "art/ripple.dds";
       specularColor = "Gray";
       specularPower = 250;
@@ -20,6 +20,7 @@ new SimGroup(GameGroup) {
       rippleDir[1] = "1 1";
       rippleSpeed[1] = 0.006;
       rippleTexScale[1] = "40 40";
+      waterFogDensity = 1;
       overallRippleMagnitude = 1;
       clarity = 0;
       reflectivity = 0;

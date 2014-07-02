@@ -1,7 +1,9 @@
+exec("metrics/main.cs");
+exec("profiling/main.cs");
+
 exec("./playGui.gui");
 exec("./materials.cs");
 exec("./datablocks.cs");
-exec("metrics/main.cs");
 exec("./ai.cs");
 
 $pref::PSSM::smallestVisiblePixelSize = 10;
@@ -37,6 +39,7 @@ function GameConnection::onEnterGame(%this) {
    setupControls();
 
    if($prefs::graphics $= High) {
+      // Not working :(
       MLAAFx.enable();
    }
 }
