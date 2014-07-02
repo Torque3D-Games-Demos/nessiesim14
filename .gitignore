@@ -1,12 +1,14 @@
 # Executable outputs
 *.exe
 *.dll
+*.lib
 *.lnk
 *.exp
 *.ilk
 
 # Compiled scripts
 *.dso
+*.decals
 
 # The console
 console.log
