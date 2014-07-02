@@ -5,9 +5,11 @@ exec("prefs.cs");
 displaySplashWindow("splash.bmp");
 
 // Console does something.
-setLogMode(2);
+setLogMode(1);
 // Disable script trace.
-trace(false);
+trace(true);
+
+setRandomSeed(2);
 
 //-----------------------------------------------------------------------------
 // Load up scripts to initialise subsystems.

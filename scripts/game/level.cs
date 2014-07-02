@@ -54,7 +54,7 @@ new SimGroup(GameGroup) {
       collisionType = "None";
    };
    new NavMesh(Nav) {
-      cellSize = 1;
+      cellSize = 0.5;
       cellHeight = 0.5;
       tileSize = 20;
       position = "0 0 8";
@@ -62,5 +62,6 @@ new SimGroup(GameGroup) {
       fileName = "./navmesh";
       alwaysRender = $prefs::debug;
       actorClimb = 0.5;
+      actorRadius = 2.0;
    };
 };

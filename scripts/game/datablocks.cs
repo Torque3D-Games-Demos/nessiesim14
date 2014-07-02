@@ -3,7 +3,6 @@ datablock CameraData(Observer) {};
 datablock PlayerData(Monster) {
    shapeFile = "art/monster.dae";
    mass = 90;
-   runSurfaceAngle = 85;
    swimForce = 90 * 5;
    maxUnderwaterForwardSpeed = 25;
    maxUnderwaterBackwardSpeed = 25;
@@ -11,20 +10,19 @@ datablock PlayerData(Monster) {
    groundImpactMinSpeed = 100;
 };
 
-datablock PlayerData(Tourist : Monster) {
+datablock PlayerData(Tourist) {
    shapeFile = "art/tourist.dae";
    mass = 90;
    runSurfaceAngle = 85;
-   swimForce = 90 * 5;
-   runForce = 90 * 10;
-   maxForwardSpeed = 10;
-   maxBackwardSpeed = 10;
-   maxSideSpeed = 10;
+   runForce = 90 * 12;
+   maxForwardSpeed = 8;
+   maxBackwardSpeed = 8;
+   maxSideSpeed = 8;
+   swimForce = 90 * 1;
+   maxUnderwaterForwardSpeed = 3;
+   maxUnderwaterBackwardSpeed = 3;
+   maxUnderwaterSideSpeed = 3;
 };
 
-datablock PlayerData(Ranger : Monster) {
-   runForce = 90 * 10;
-   maxForwardSpeed = 10;
-   maxBackwardSpeed = 10;
-   maxSideSpeed = 10;
+datablock PlayerData(Ranger : Tourist) {
 };

@@ -14,6 +14,7 @@ function AIPlayer::setPathDestination(%obj, %dest, %slowdown) {
       from = %obj.getPosition();
       to = %dest;
       mesh = %obj.getNavMesh();
+      alwaysRender = $prefs::debug;
    };
    if(%path.getCount() > 0) {
       %obj._navigationSlowdown = %slowdown;

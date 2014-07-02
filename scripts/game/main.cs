@@ -110,24 +110,14 @@ function getCameraAxes() {
 function onStart() {
    exec("./level.cs");
 
-   // Spawn AI characters
-   %locations =
-      "-65 114 6" NL
-      "-74 114 6" NL
-      "-76 100 6" NL
-      "" NL
-      "" NL
-      "" NL
-      "";
-   %count = getRecordCount(%locations);
-   for(%i = 0; %i < %count; %i++) {
-      %pos = getRecord(%locations, %i);
-      if(getWordCount(%pos) == 3) {
-         GameGroup.add(new AIPlayer() {
-            datablock = Tourist;
-            position = %pos;
-         });
-      }
+   %numTourists = 10;
+   for(%i = 0; %i < %numTourists; %i++) {
+      %spot = chooseTouristSpot();
+      GameGroup.add(new AIPlayer() {
+         datablock = Tourist;
+         spot = getWord(%spot, 0);
+         position = getWords(%spot, 1, 3);
+      });
    }
 }
 

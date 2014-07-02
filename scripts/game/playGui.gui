@@ -18,7 +18,8 @@ new GameTSCtrl(PlayGui) {
    forceFOV = "0";
    enabled = "1";
    helpTag = "0";
-   new GuiShapeNameHud() {
+   new GuiShapeNameHud([Names]) {
+      visible = $prefs::debug;
       profile = GuiDefaultProfile;
       extent = "1024 768";
       horizSizing = "relative";
