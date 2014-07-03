@@ -18,7 +18,7 @@ function GameConnection::onEnterGame(%this) {
       camVel = "0 0 0";
       camForce = "0 0 0";
    };
-   TheCamera.setTransform("-98.0393 162.685 20 1 0 0 0");
+   TheCamera.setTransform("-98.0393 162.685 15 1 0 0 0");
    TheCamera.scopeToClient(%this);
    GameGroup.add(TheCamera);
 
@@ -30,7 +30,7 @@ function GameConnection::onEnterGame(%this) {
 
    %this.setControlObject(TheMonster);
    %this.setCameraObject(TheCamera);
-   TheCamera.setTrackObject(TheMonster);
+   TheCamera.setTrackObject(TheMonster, "0 0 4");
    %this.setFirstPerson(false);
 
    //PlayGui.noCursor = true;
@@ -119,6 +119,18 @@ function onStart() {
          position = getWords(%spot, 1, 3);
       });
    }
+
+   %numRangers = 1;
+   for(%i = 0; %i < %numRangers; %i++) {
+      %spot = chooseRangerSpot();
+      GameGroup.add(new AIPlayer() {
+         datablock = Ranger;
+         spot = getWord(%spot, 0);
+         position = getWords(%spot, 1, 3);
+      });
+   }
+
+   GameGroup.add(Rangers);
 }
 
 //-----------------------------------------------------------------------------

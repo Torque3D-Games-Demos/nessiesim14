@@ -38,6 +38,17 @@ singleton Material(TouristMaterial) {
    diffuseColor[0] = "LightSalmon";
 };
 
+singleton Material(RangerMaterial) {
+   mapTo = "RangerMaterial";
+   diffuseColor[0] = "LightGray";
+};
+
+singleton Material(HatMaterial) {
+   mapTo = "HatMaterial";
+   diffuseColor[0] = "Brown";
+   doubleSided = true;
+};
+
 singleton Material(WaterMaterial : Invisible) {
    mapTo = "WaterMaterial";
    //diffuseColor[0] = "0.3 0.3 0.3";

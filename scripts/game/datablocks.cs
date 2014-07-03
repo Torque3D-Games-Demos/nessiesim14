@@ -25,4 +25,5 @@ datablock PlayerData(Tourist) {
 };
 
 datablock PlayerData(Ranger : Tourist) {
+   shapeFile = "art/ranger.dae";
 };

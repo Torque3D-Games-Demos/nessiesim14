@@ -5,9 +5,9 @@ exec("prefs.cs");
 displaySplashWindow("splash.bmp");
 
 // Console does something.
-setLogMode(1);
+setLogMode(2);
 // Disable script trace.
-trace(true);
+trace(false);
 
 setRandomSeed(2);
 
