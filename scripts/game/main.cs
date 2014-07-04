@@ -9,6 +9,7 @@ exec("./ai.cs");
 
 $pref::PSSM::smallestVisiblePixelSize = 10;
 $pref::Shadows::filterMode = "SoftShadowHighQuality";
+$enableDirectInput = true;
 
 //-----------------------------------------------------------------------------
 // Called when all datablocks have been transmitted.
@@ -48,6 +49,8 @@ function GameConnection::onEnterGame(%this) {
 //-----------------------------------------------------------------------------
 function setupControls() {
    new ActionMap(MoveMap);
+   MoveMap.push();
+
    MoveMap.bind("keyboard", "w", forwards);
    MoveMap.bind("keyboard", "s", backwards);
    MoveMap.bind("keyboard", "a", left);
@@ -55,7 +58,12 @@ function setupControls() {
    MoveMap.bind("keyboard", "space", attack);
    MoveMap.bind("keyboard", "lcontrol", bubble);
    MoveMap.bind("keyboard", "lshift", creep);
-   MoveMap.push();
+
+   MoveMap.bind("gamepad", "btn_a", attack);
+   MoveMap.bind("gamepad", "btn_b", bubble);
+   MoveMap.bind("gamepad", "btn_x", creep);
+   MoveMap.bind("gamepad", "thumblx", "D", "-0.23 0.23", right);
+   MoveMap.bind("gamepad", "thumbly", "D", "-0.23 0.23", forwards);
 
    $MovementHz = 50;
    $MovementMillis = 1000 / $MovementHz;
