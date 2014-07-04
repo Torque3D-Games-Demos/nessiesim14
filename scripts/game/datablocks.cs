@@ -51,8 +51,8 @@ datablock ParticleData(AttackRippleParticle) {
    colors[2] = "0.7 0.8 1.0 0.0";
 
    sizes[0] = 2.0;
-   sizes[1] = 11.0;
-   sizes[2] = 16.0;
+   sizes[1] = 14.0;
+   sizes[2] = 22.0;
 
    times[0] = 0.0;
    times[1] = 0.5;
@@ -82,8 +82,8 @@ datablock particleData(BubbleRippleParticle) {
    colors[2] = "1 1 1 0.0";
 
    sizes[0] = 2.0;
-   sizes[1] = 4.0;
-   sizes[2] = 5.0;
+   sizes[1] = 8.0;
+   sizes[2] = 12.0;
 
    times[0] = 0.0;
    times[1] = 0.5;
@@ -106,10 +106,10 @@ datablock ParticleData(BubbleParticle)
    colors[2]     = "0.7 0.7 0.7 1";
    colors[3]     = "0.7 0.7 0.7 0";
 
-   sizes[0]      = 0.3;
-   sizes[1]      = 0.4;
-   sizes[2]      = 0.5;
-   sizes[3]      = 0.5;
+   sizes[0]      = 0.4;
+   sizes[1]      = 0.5;
+   sizes[2]      = 0.55;
+   sizes[3]      = 0.55;
 
    times[0]      = 0.0;
    times[1]      = 0.5;
@@ -127,15 +127,15 @@ datablock ParticleData(AttackSplashParticle) {
    lifetimeVarianceMS   = 500;
    useInvAlpha          = false;
 
-   colors[0]     = "0.7 0.7 0.7 0.5";
-   colors[1]     = "0.7 0.7 0.7 0.4";
-   colors[2]     = "0.7 0.7 0.7 0.2";
+   colors[0]     = "0.7 0.7 0.7 1";
+   colors[1]     = "0.7 0.7 0.7 1";
+   colors[2]     = "0.7 0.7 0.7 1";
    colors[3]     = "0.7 0.7 0.7 0";
 
-   sizes[0]      = 4;
-   sizes[1]      = 8;
-   sizes[2]      = 9;
-   sizes[3]      = 9;
+   sizes[0]      = 6;
+   sizes[1]      = 9;
+   sizes[2]      = 10.5;
+   sizes[3]      = 10.5;
 
    times[0]      = 0.0;
    times[1]      = 0.5;
@@ -157,10 +157,10 @@ datablock ParticleData(AttackJetParticle : AttackSplashParticle) {
    colors[2]     = "0.7 0.7 0.7 0.4";
    colors[3]     = "0.7 0.7 0.7 0";
 
-   sizes[0]      = 2;
-   sizes[1]      = 4;
-   sizes[2]      = 5;
-   sizes[3]      = 5;
+   sizes[0]      = 3;
+   sizes[1]      = 5;
+   sizes[2]      = 6.5;
+   sizes[3]      = 6.5;
 };
 
 datablock ParticleData(WakeParticle) {
@@ -174,16 +174,16 @@ datablock ParticleData(WakeParticle) {
    spinRandomMin        = -30.0;
    spinRandomMax        = 30.0;
 
-   colors[0] = "0.7 0.8 1.0 0.2";
-   colors[1] = "0.7 0.8 1.0 0.1";
+   colors[0] = "0.7 0.8 1.0 0.1";
+   colors[1] = "0.7 0.8 1.0 0.3";
    colors[2] = "0.7 0.8 1.0 0.0";
 
-   sizes[0]      = 1.5;
-   sizes[1]      = 2.75;
-   sizes[2]      = 6.5;
+   sizes[0]      = 1;
+   sizes[1]      = 3.75;
+   sizes[2]      = 7.5;
 
    times[0]      = 0.0;
-   times[1]      = 0.5;
+   times[1]      = 0.3;
    times[2]      = 1.0;
 };
 
@@ -194,7 +194,7 @@ datablock ParticleEmitterData(BubbleEmitter)
 
    ejectionVelocity = 0.50;
    velocityVariance = 0.00;
-   ejectionOffset   = 1.0;
+   ejectionOffset   = 0.0;
 
    thetaMin         = 1.0;
    thetaMax         = 100.0;
@@ -225,7 +225,7 @@ datablock ParticleEmitterData(AttackSplashEmitter) {
    ejectionOffset   = 0;
 
    thetaMin         = 1.0;
-   thetaMax         = 40.0;
+   thetaMax         = 50.0;
 
    particles = AttackSplashParticle;
 };

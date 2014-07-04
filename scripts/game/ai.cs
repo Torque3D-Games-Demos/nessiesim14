@@ -63,6 +63,7 @@ event(Monster, Attack, "Player AIPlayer");
 // Events that come from tourists.
 eventQueue(Tourist);
 event(Tourist, Scared);
+event(Tourist, Eaten);
 event(Tourist, AskHelp);
 
 function chooseGroundPos(%airPos, %radius) {
@@ -159,10 +160,9 @@ function Monster::onMonsterSwim(%this, %obj, %pos) {
    %p = new ParticleEmitterNode() {
       datablock = DefaultNode;
       emitter = WakeEmitter;
-      velocity = %obj.getVelocity();
       active = true;
       position = getWords(%obj.getPosition(), 0, 1) SPC 3.2;
    };
-   %p.schedule(500, delete, %p);
+   %p.schedule(3000, delete, %p);
    GameGroup.add(%p);
 }
