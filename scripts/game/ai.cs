@@ -90,15 +90,79 @@ function chooseGroundPos(%airPos, %radius) {
    return %airPos;
 }
 
-function Monster::onAdd(%this, %obj) {
-   $Monster::swimNoiseMs = 500;
-   $Monster::swimNoiseSpeed = 0;
-   schedule($Monster::swimNoiseMs, %this, makeNoise, %this, %obj);
-}
-
-function makeNoise(%this, %obj) {
-   schedule($Monster::swimNoiseMs, %this, makeNoise, %this, %obj);
+$Monster::swimNoiseMs = 500;
+$Monster::swimNoiseSpeed = 3;
+function Monster__makeNoise(%this, %obj) {
+   schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
    if(VectorLen(%obj.getVelocity()) > $Monster::swimNoiseSpeed) {
       postEvent(Monster, Swim, %obj.getPosition());
    }
+}
+
+function Monster::onAdd(%this, %obj) {
+   subscribe(%obj, Monster, Attack);
+   subscribe(%obj, Monster, Bubble);
+   subscribe(%obj, Monster, Swim);
+   schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
+}
+
+function Monster::onMonsterAttack(%this, %obj, %pos) {
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = AttackRippleEmitter;
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 3.2;
+   };
+   %p.schedule(1000, delete, %p);
+   GameGroup.add(%p);
+
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = AttackSplashEmitter;
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 2;
+   };
+   %p.schedule(500, delete, %p);
+   GameGroup.add(%p);
+
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = AttackJetEmitter;
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 2.5;
+   };
+   %p.schedule(300, delete, %p);
+   GameGroup.add(%p);
+}
+
+function Monster::onMonsterBubble(%this, %obj, %pos) {
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = BubbleRippleEmitter;
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 3.2;
+   };
+   %p.schedule(1000, delete, %p);
+   GameGroup.add(%p);
+
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = BubbleEmitter;
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 2.5;
+   };
+   %p.schedule(700, delete, %p);
+   GameGroup.add(%p);
+}
+
+function Monster::onMonsterSwim(%this, %obj, %pos) {
+   %p = new ParticleEmitterNode() {
+      datablock = DefaultNode;
+      emitter = WakeEmitter;
+      velocity = %obj.getVelocity();
+      active = true;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 3.2;
+   };
+   %p.schedule(500, delete, %p);
+   GameGroup.add(%p);
 }

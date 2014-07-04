@@ -47,7 +47,7 @@ function RangerSM::enterAssisting(%this) {
    %obj.threshold = 2;
    %obj.setShapeName(" Helping ");
    %obj.setMoveSpeed(0.5);
-   %obj.setPathDestination(%obj.assisting.helpLocation);
+   while(!%obj.setPathDestination(chooseGroundPos(%obj.assisting.helpLocation, 3))) {}
 }
 
 function RangerSM::enterPaused(%this) {

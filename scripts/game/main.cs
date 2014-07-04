@@ -52,6 +52,9 @@ function setupControls() {
    MoveMap.bind("keyboard", "s", backwards);
    MoveMap.bind("keyboard", "a", left);
    MoveMap.bind("keyboard", "d", right);
+   MoveMap.bind("keyboard", "space", attack);
+   MoveMap.bind("keyboard", "lcontrol", bubble);
+   MoveMap.bind("keyboard", "lshift", creep);
    MoveMap.push();
 
    $MovementHz = 50;
@@ -95,6 +98,35 @@ function forwards(%val)  { $forward  = %val; updateMovement(); }
 function backwards(%val) { $backward = %val; updateMovement(); }
 function left(%val)      { $left     = %val; updateMovement(); }
 function right(%val)     { $right    = %val; updateMovement(); }
+
+$lastAttack = getSimTime();
+$attackCooldown = 1000;
+function attack(%val) {
+   if(%val) {
+      %now = getSimTime();
+      if(%now - $lastAttack > $attackCooldown) {
+         $lastAttack = %now;
+         postEvent(Monster, Attack, TheMonster.getPosition());
+      }
+   }
+}
+
+$lastBubble = getSimTime();
+$bubbleCooldown = 500;
+function bubble(%val) {
+   if(%val) {
+      %now = getSimTime();
+      if(%now - $lastBubble > $bubbleCooldown) {
+         $lastAttack = %now;
+         postEvent(Monster, Bubble, TheMonster.getPosition());
+      }
+   }
+}
+
+$moveSpeed = 1;
+function creep(%val) {
+   $moveSpeed = %val ? 0.1 : 1;
+}
 
 function getCameraAxes() {
    %front = VectorSub(TheMonster.getPosition(), TheCamera.getPosition());
