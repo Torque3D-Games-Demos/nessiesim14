@@ -91,6 +91,7 @@ function TouristSM::leaveEnquiring(%this) {
 
 function TouristSM::enterGetHelp(%this) {
    %obj = %this.owner;
+   %obj.threshold = 2;
    %r = findNearestRanger(%obj.getPosition());
    if(isObject(%r)) {
       %obj.helpLocation = chooseGroundPos(%obj.getPosition(), 3);
@@ -147,14 +148,32 @@ function Tourist::onMonsterSwim(%this, %obj, %pos) {
 }
 
 function Tourist::onDetectionChange(%this, %obj, %val) {
-   if(%val == 4) {
+   if(%val == %obj.threshold) {
       %obj.onEvent(monsterNoise);
       %obj.resetDetection();
    }
 }
 
 function Tourist::onMonsterBubble(%this, %obj, %pos) {
-   //error(%obj SPC %pos);
+   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(%pos, 0, 1) SPC 0;
+   %d = VectorLen(VectorSub(%p1, %p2));
+   if(%d < 10) {
+      %obj.increaseDetection(3);
+   } else if(%d < 25) {
+      %obj.increaseDetection(2);
+   }
+}
+
+function Tourist::onMonsterAttack(%this, %obj, %pos) {
+   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(%pos, 0, 1) SPC 0;
+   %d = VectorLen(VectorSub(%p1, %p2));
+   if(%d < 30) {
+      %obj.onEvent(attackNear);
+   } else if(%d < 50) {
+      %obj.onEvent(attackFar);
+   }
 }
 
 $touristSpots =
@@ -181,6 +200,8 @@ function Tourist::onAdd(%this, %obj) {
    // Make a state machine!
    %obj.sm = makeSM(Tourist, %obj);
    %obj.onEvent(relax);
+
+   %obj.threshold = 4;
 
    // Set initial look direction based on slope, or randomly.
    %pos = %obj.getPosition();

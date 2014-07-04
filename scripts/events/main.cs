@@ -5,19 +5,21 @@ function eventQueue(%namespace) {
    };
 }
 
-function event(%namespace, %action, %class) {
-   %class = %class $= "" ? AIPlayer : %class;
+function event(%namespace, %action, %classes) {
+   %classes = %classes $= "" ? AIPlayer : %classes;
    %manager = %namespace @ Events;
    %event = %namespace @ %action;
    %method = on @ %event;
-   eval(
-%manager @ ".registerEvent(" @ %event @ ");" @
+   eval(%manager @ ".registerEvent(" @ %event @ ");");
+   foreach$(%class in %classes) {
+      eval(
 "function " @ %class @ "::" @ %method @ "(%this, %data) {" @
    "if(%this.getDataBlock().isMethod(" @ %method @ ")) {" @
       "%this.getDataBlock()." @ %method @ "(%this, %data);" @
    "}" @
 "}"
-   );
+      );
+   }
 }
 
 function subscribe(%obj, %namespace, %action) {

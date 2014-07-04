@@ -4,6 +4,10 @@ exec("scripts/events/main.cs");
 exec("./touristAI.cs");
 exec("./rangerAI.cs");
 
+function delete(%obj) {
+   %obj.delete();
+}
+
 // Convenience function for state machines.
 function makeSM(%type, %obj) {
    %parent = %type @ SM;
@@ -35,12 +39,10 @@ function AIPlayer::resetDetection(%obj) {
 }
 
 function AIPlayer::timeOut(%obj, %time) {
-   error(timeout SPC %obj SPC %time);
    %obj._timeout = schedule(%time, %obj, AIPlayer__timeOut, %obj);
 }
 
 function AIPlayer__timeOut(%obj) {
-   error("timeout!!" SPC %obj);
    %obj._timeout = "";
    %obj.onEvent(timeOut);
 }
@@ -54,9 +56,9 @@ function AIPlayer::stopTimeOut(%obj) {
 
 // Events relevant to the monster's actions.
 eventQueue(Monster);
-event(Monster, Attack);
-event(Monster, Swim);
-event(Monster, Bubble);
+event(Monster, Swim,   "Player AIPlayer");
+event(Monster, Bubble, "Player AIPlayer");
+event(Monster, Attack, "Player AIPlayer");
 
 // Events that come from tourists.
 eventQueue(Tourist);

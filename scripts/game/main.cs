@@ -30,7 +30,7 @@ function GameConnection::onEnterGame(%this) {
 
    %this.setControlObject(TheMonster);
    %this.setCameraObject(TheCamera);
-   TheCamera.setTrackObject(TheMonster, "0 0 4");
+   TheCamera.setTrackObject(TheMonster, "0 0 3");
    %this.setFirstPerson(false);
 
    //PlayGui.noCursor = true;
@@ -41,7 +41,7 @@ function GameConnection::onEnterGame(%this) {
 
    if($prefs::graphics $= High) {
       // Not working :(
-      MLAAFx.enable();
+      SSAOPostFx.enable();
    }
 }
 
@@ -71,6 +71,7 @@ function updateMovement() {
    %right = getField(%axes, 1);
    %moveDir = VectorAdd(VectorScale(%right, $right - $left),
                         VectorScale(%front, $forward - $backward));
+   %moveDir = VectorScale(%moveDir, $moveSpeed);
    $mvRightAction = getWord(%moveDir, 0);
    $mvForwardAction = getWord(%moveDir, 1);
 }
