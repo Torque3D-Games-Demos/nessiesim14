@@ -125,57 +125,12 @@ function Tourist::onCollision(%this, %obj, %col) {
    }
 }
 
-function Tourist::onMonsterAttack(%this, %obj, %pos) {
-   //error(%obj SPC %pos);
-}
-
 function Tourist::onTouristScared(%this, %obj, %scared) {
    if(%scared == %obj) return;
    %d = VectorLen(VectorSub(%obj.getPosition(), %scared.getPosition()));
    if(%d < 10) {
       %obj.inquiring = %scared;
       %obj.onEvent(touristScared);
-   }
-}
-
-function Tourist::onMonsterSwim(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(TheMonster.getPosition(), 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 10) {
-      %obj.increaseDetection(1);
-   }
-}
-
-function Tourist::onDetectionChange(%this, %obj, %val) {
-   if(%val == %obj.threshold) {
-      %obj.onEvent(monsterNoise);
-      %obj.resetDetection();
-   }
-}
-
-function Tourist::onMonsterBubble(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(%pos, 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 10) {
-      %obj.increaseDetection(3);
-   } else if(%d < 25) {
-      %obj.increaseDetection(2);
-   }
-}
-
-function Tourist::onMonsterAttack(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(%pos, 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 5) {
-      postEvent(Tourist, Eaten, %obj.getPosition());
-      %obj.schedule(750, delete, %obj);
-   } else if(%d < 30) {
-      %obj.onEvent(attackNear);
-   } else if(%d < 50) {
-      %obj.onEvent(attackFar);
    }
 }
 

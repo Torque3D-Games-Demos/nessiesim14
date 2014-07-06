@@ -11,6 +11,7 @@ datablock PlayerData(Monster) {
 };
 
 datablock PlayerData(Tourist) {
+   class = Person;
    shapeFile = "art/tourist.dae";
    mass = 90;
    runSurfaceAngle = 85;

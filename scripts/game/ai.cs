@@ -166,3 +166,44 @@ function Monster::onMonsterSwim(%this, %obj, %pos) {
    %p.schedule(3000, delete, %p);
    GameGroup.add(%p);
 }
+
+function Person::onMonsterAttack(%this, %obj, %pos) {
+   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(%pos, 0, 1) SPC 0;
+   %d = VectorLen(VectorSub(%p1, %p2));
+   if(%d < 5) {
+      postEvent(Tourist, Eaten, %obj.getPosition());
+      %obj.schedule(750, delete, %obj);
+   } else if(%d < 30) {
+      %obj.onEvent(attackNear);
+   } else if(%d < 50) {
+      %obj.onEvent(attackFar);
+   }
+}
+
+function Person::onMonsterBubble(%this, %obj, %pos) {
+   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(%pos, 0, 1) SPC 0;
+   %d = VectorLen(VectorSub(%p1, %p2));
+   if(%d < 10) {
+      %obj.increaseDetection(3);
+   } else if(%d < 25) {
+      %obj.increaseDetection(2);
+   }
+}
+
+function Person::onMonsterSwim(%this, %obj, %pos) {
+   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(TheMonster.getPosition(), 0, 1) SPC 0;
+   %d = VectorLen(VectorSub(%p1, %p2));
+   if(%d < 10) {
+      %obj.increaseDetection(1);
+   }
+}
+
+function Person::onDetectionChange(%this, %obj, %val) {
+   if(%val == %obj.threshold) {
+      %obj.onEvent(monsterNoise);
+      %obj.resetDetection();
+   }
+}

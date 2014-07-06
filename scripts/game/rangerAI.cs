@@ -80,44 +80,6 @@ function Ranger::onTouristScared(%this, %obj, %scared) {
    }
 }
 
-function Ranger::onMonsterSwim(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(%pos, 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 10) {
-      %obj.increaseDetection(1);
-   }
-}
-
-function Ranger::onMonsterBubble(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(%pos, 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 10) {
-      %obj.increaseDetection(4);
-   } else if(%d < 25) {
-      %obj.increaseDetection(2);
-   }
-}
-
-function Ranger::onMonsterAttack(%this, %obj, %pos) {
-   %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(%pos, 0, 1) SPC 0;
-   %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 30) {
-      %obj.onEvent(attackNear);
-   } else if(%d < 50) {
-      %obj.onEvent(attackFar);
-   }
-}
-
-function Ranger::onDetectionChange(%this, %obj, %val) {
-   if(%val == %obj.threshold) {
-      %obj.onEvent(monsterNoise);
-      %obj.resetDetection();
-   }
-}
-
 function Ranger::onAdd(%this, %obj) {
    Rangers.add(%obj);
 
