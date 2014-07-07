@@ -1,0 +1,36 @@
+new GuiBitmapCtrl(EndGameGui) {
+   bitmap = "art/hudfill";
+   profile = CenterPrintProfile;
+   tooltipprofile = GuiToolTipProfile;
+   horizSizing = width;
+   vertSizing = height;
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 8";
+   wrap = false;
+
+   new GuiMLTextCtrl([TextL]) {
+      profile = CenterPrintTextProfile;
+      tooltipprofile = GuiToolTipProfile;
+      horizSizing = center;
+      vertSizing = center;
+      lineSpacing = 2;
+      allowColorChars = true;
+      maxChars = -1;
+      position = "300 370";
+      extent = "200 100";
+      text =
+         "THIS JUST IN - local tourist eaten by hideous lake monster." SPC
+         "Local photographer famous." NL "" NL
+         "Esc - quit" NL
+         "Enter - restart";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/nessie";
+      profile = CenterPrintProfile;
+      horizSizing = center;
+      vertSizing = center;
+      position = "300 150";
+      extent = "200 200";
+   };
+};

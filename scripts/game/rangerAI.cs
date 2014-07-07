@@ -10,11 +10,16 @@ new ScriptObject(RangerSMTemplate) {
    // We'll relax eventually. Or attack.
    transition[alert, timeOut] = relaxed;
    transition[alert, monsterNoise] = pursuing;
+   transition[alert, touristAskHelp] = assisting;
 
+   // Help tourists by following them.
    transition[assisting, monsterNoise] = paused;
    transition[assisting, reachDestination] = alert;
    transition[assisting, attackFar] = paused;
 
+   transitition[pursuing, timeOut] = alert;
+
+   // Heard the monster while assisting.
    transition[paused, monsterNoise] = pursuing;
    transition[paused, timeOut] = assisting;
 
@@ -25,12 +30,15 @@ new ScriptObject(RangerSMTemplate) {
 
 function RangerSM::enterRelaxed(%this) {
    %obj = %this.owner;
-   %obj.setShapeName(" Relaxed ");
+   %obj.say("Must have been rats.");
+   %obj.setMoveSpeed(0.2);
 }
 
 function RangerSM::enterAlert(%this) {
    %obj = %this.owner;
-   %obj.setShapeName(" Alert ");
+   if(%obj.getShapeName() $= "") {
+      %obj.say("Hmm?");
+   }
    %ang = getRandom() * 2 * 3.14159;
    %dir = VectorScale(mSin(%ang) SPC mSin(%ang) SPC 0, 1000);
    %look = VectorAdd(%obj.getPosition(), %dir);
@@ -39,29 +47,60 @@ function RangerSM::enterAlert(%this) {
 }
 
 function RangerSM::leaveAlert(%this) {
-   %this.owner.stopTimeOut();
+   %obj = %this.owner;
+   %obj.say("All quiet now.");
+   %obj.stopTimeOut();
+   while(!%obj.setPathDestination(chooseRangerSpot(%obj.spot))) {}
 }
 
 function RangerSM::enterAssisting(%this) {
    %obj = %this.owner;
    %obj.threshold = 2;
-   %obj.setShapeName(" Helping ");
+   %obj.say("Monster? Where?");
    %obj.setMoveSpeed(0.5);
    while(!%obj.setPathDestination(chooseGroundPos(%obj.assisting.helpLocation, 3))) {}
 }
 
 function RangerSM::enterPaused(%this) {
    %obj = %this.owner;
-   %obj.setShapeName(" Pausing ");
+   %obj.say("What was that?");
    %obj.timeOut(getRandom(3000, 7000));
+   %obj.stop();
 }
 
 function RangerSM::leavePaused(%this) {
    %this.owner.stopTimeOut();
 }
 
-function Ranger::onReachPathDestination(%this, %obj) {
-   %obj.onEvent(reachDestination);
+function RangerSM::enterPursuing(%this) {
+   %obj = %this.owner;
+   %obj.say("I have you now!");
+   %obj.setAimObject(TheMonster);
+   %obj.stop();
+   %obj.timeOut(getRandom(5000, 10000));
+}
+
+function RangerSM::onAttackNear(%this) {
+   if(strstr("alert pursuing paused assisting", %this.state) != -1) {
+      %obj = %this.owner;
+      if(!%obj.eaten) {
+         %l = new SpotLight() {
+            innerAngle = 45;
+            outerAngle = 90;
+            range = 50;
+            color = "White";
+            castShadows = false;
+            brightness = 2;
+         };
+         %trans = %obj.getEyeTransform();
+         %pos = VectorAdd(getWords(%trans, 0, 2), "0 0 2");
+         %rot = getWords(%trans, 3, 6);
+         %l.setTransform(%pos SPC %rot);
+         GameGroup.add(%l);
+         %l.schedule(100, delete);
+         schedule(500, 0, endGame, true);
+      }
+   }
 }
 
 function Ranger::onTouristAskHelp(%this, %obj, %tourist) {
@@ -96,7 +135,6 @@ function Ranger::onAdd(%this, %obj) {
    %obj.threshold = 3;
 }
 
-new SimSet(Rangers);
 function findNearestRanger(%pos) {
    %best = -1;
    %bestDist = 10000;
@@ -112,12 +150,14 @@ function findNearestRanger(%pos) {
 }
 
 $rangerSpots =
+   "176 188 5" NL
+   "154 5.5 7.3" NL
+   "-14 -227 5" NL
+   "-212 -35 5" NL
+   "130 -99 5" NL
    "-96 45 5";
 $numRangerSpots = getRecordCount($rangerSpots);
 
-function chooseRangerSpot(%i) {
-   %idx = %i $= "" ? getRandom(0, $numRangerSpots-1) : %i;
-   %pos = getRecord($rangerSpots, %idx);
-   %pos = chooseGroundPos(%pos, 10);
-   return %idx SPC %pos;
+function chooseRangerSpot(%idx, %radius) {
+   return chooseGroundPos(getRecord($rangerSpots, %idx), %radius);
 }

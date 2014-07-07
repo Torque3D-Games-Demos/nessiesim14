@@ -1,0 +1,67 @@
+new GuiControlProfile(CenterPrintTextProfile) {
+   fontType = ($platform $= "macos") ? "Monaco" : "Lucida Console";
+   fontSize = ($platform $= "macos") ? 13 : 12;
+   fontColor = "White";
+};
+
+PlayGui.add(new GuiBitmapCtrl([Help]) {
+   bitmap = "art/hudfill";
+   profile = CenterPrintProfile;
+   tooltipprofile = GuiToolTipProfile;
+   horizSizing = center;
+   vertSizing = bottom;
+   position = "150 490";
+   extent = "600 100";
+   minExtent = "8 8";
+   wrap = false;
+
+   new GuiMLTextCtrl([TextL]) {
+      profile = CenterPrintTextProfile;
+      tooltipprofile = GuiToolTipProfile;
+      horizSizing = center;
+      vertSizing = center;
+      lineSpacing = 2;
+      allowColorChars = true;
+      maxChars = -1;
+      position = "5 5";
+      extent = "190 90";
+      text =
+         "Esc - quit" NL
+         "h - show help" NL
+         "p - surrender" NL
+         "~ - show console";
+   };
+
+   new GuiMLTextCtrl([TextC]) {
+      profile = CenterPrintTextProfile;
+      tooltipprofile = GuiToolTipProfile;
+      horizSizing = center;
+      vertSizing = center;
+      lineSpacing = 2;
+      allowColorChars = true;
+      maxChars = -1;
+      position = "205 5";
+      extent = "190 90";
+      text =
+         "WASD - move" NL
+         "Ctrl - make noise" NL
+         "Shift - slow" NL
+         "Space - attack!";
+   };
+
+   new GuiMLTextCtrl([TextR]) {
+      profile = CenterPrintTextProfile;
+      tooltipprofile = GuiToolTipProfile;
+      horizSizing = center;
+      vertSizing = center;
+      lineSpacing = 2;
+      allowColorChars = true;
+      maxChars = -1;
+      position = "405 5";
+      extent = "190 90";
+      text =
+         "Eat tourists at the water's edge." SPC
+         "Avoid being photographed." NL
+         "Good luck!";
+   };
+});

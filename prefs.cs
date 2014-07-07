@@ -1,2 +1,2 @@
-$prefs::debug = true;   // true or true
-$prefs::graphics = Low; // High or Low
+$prefs::debug = true;  // true or false
+$prefs::graphics = High; // High or Low

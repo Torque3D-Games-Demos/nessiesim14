@@ -9,7 +9,7 @@ setLogMode(2);
 // Disable script trace.
 trace(false);
 
-setRandomSeed(2);
+setRandomSeed(getRealTime());
 
 //-----------------------------------------------------------------------------
 // Load up scripts to initialise subsystems.

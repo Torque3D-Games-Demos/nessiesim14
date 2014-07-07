@@ -22,6 +22,11 @@ new ScriptObject(TouristSMTemplate) {
    transition[getHelp, noHelp] = fleeing;
    transition[getHelp, reachDestination] = returnToTheScene;
 
+   transition[returnToTheScene, reachDestination] = scared;
+
+   // When fleeing, either die or escape...
+   transition[fleeing, reachDestination] = escape;
+
    // Attacks!
    transition[_, attackNear] = getHelp;
    transition[_, attackFar] = scared;
@@ -29,7 +34,7 @@ new ScriptObject(TouristSMTemplate) {
 
 function TouristSM::enterRelaxed(%this) {
    %obj = %this.owner;
-   %obj.setShapeName(" Relaxed ");
+   %obj.say("Looks safe now!");
    %obj.wander = schedule(getRandom(5000, 10000), %obj, Tourist__wander, %obj);
 }
 
@@ -47,7 +52,7 @@ function Tourist::onReachPathDestination(%this, %obj) {
       case getHelp:
          postEvent(Tourist, AskHelp, %obj);
    }
-   %obj.onEvent(reachDestination);
+   Parent::onReachPathDestination(%this, %obj);
 }
 
 function TouristSM::leaveRelaxed(%this) {
@@ -70,7 +75,7 @@ function TouristSM::leaveScared(%this) {
 }
 
 function Tourist__becomeScared(%obj) {
-   %obj.setShapeName(" Scared ");
+   %obj.say("What's that?");
    %obj.clearPathDestination();
    %obj.setAimObject(TheMonster);
    %obj.becomeScared = "";
@@ -79,7 +84,7 @@ function Tourist__becomeScared(%obj) {
 
 function TouristSM::enterInquiring(%this) {
    %obj = %this.owner;
-   %obj.setShapeName(" R U OK? ");
+   %obj.say("What's up?");
    %obj.setAimObject(%obj.inquiring);
    %obj.timeOut(getRandom(3000, 7000));
 }
@@ -95,7 +100,7 @@ function TouristSM::enterGetHelp(%this) {
    %r = findNearestRanger(%obj.getPosition());
    if(isObject(%r)) {
       %obj.helpLocation = chooseGroundPos(%obj.getPosition(), 3);
-      %obj.setShapeName(" Help! ");
+      %obj.say("A monster!");
       %obj.setMoveSpeed(1);
       %pos = chooseGroundPos(%r.getPosition(), 3);
       %obj.setPathDestination(%pos);
@@ -105,9 +110,9 @@ function TouristSM::enterGetHelp(%this) {
 function TouristSM::enterFleeing(%this) {
    %obj = %this.owner;
    %obj.fetchLocation = %obj.getPosition();
-   %obj.setShapeName(" Fleeing ");
+   %obj.say("Nope nope nope");
    %obj.setMoveSpeed(1);
-   // Temporary
+   // Temporary?
    %obj.setPathDestination("45 -235 5");
 }
 
@@ -118,7 +123,9 @@ function TouristSM::enterReturnToTheScene(%this) {
 }
 
 function Tourist::onCollision(%this, %obj, %col) {
-   if(%obj.sm.state $= getHelp && %col.getDataBlock() $= Ranger) {
+   if(%obj.sm.state $= getHelp &&
+         %col.isMethod(getDataBlock) &&
+         %col.getDataBlock() $= Ranger) {
       %obj.clearPathDestination();
       postEvent(Tourist, AskHelp, %obj);
       %obj.onEvent(reachDestination);
@@ -135,14 +142,18 @@ function Tourist::onTouristScared(%this, %obj, %scared) {
 }
 
 $touristSpots =
-   "13 151 3" NL
-   "-71 108 2.5" NL
-   "-42 75 2.5" NL
-   "9 80 3";
+   "16 -135 5" NL
+   "43 -61 5" NL
+   "-90 -22 5" NL
+   "159 65 6" NL
+   "13 151 6" NL
+   "-71 108 5.5" NL
+   "-42 75 5.5" NL
+   "9 80 6";
 $numTouristSpots = getRecordCount($touristSpots);
 
 function chooseTouristSpot(%i) {
-   %idx = %i $= "" ? getRandom(0, $numTouristSpots-1) : %i;
+   %idx = %i $= "" ? getRandom(0, $numTouristSpots-1) : %i % $numTouristSpots;
    %pos = getRecord($touristSpots, %idx);
    %pos = chooseGroundPos(%pos, 10);
    return %idx SPC %pos;

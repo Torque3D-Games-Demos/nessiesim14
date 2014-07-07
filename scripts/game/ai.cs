@@ -1,6 +1,8 @@
 exec("scripts/navigation/main.cs");
 exec("scripts/stateMachine/main.cs");
 exec("scripts/events/main.cs");
+exec("scripts/say/main.cs");
+
 exec("./touristAI.cs");
 exec("./rangerAI.cs");
 
@@ -92,9 +94,9 @@ function chooseGroundPos(%airPos, %radius) {
 }
 
 $Monster::swimNoiseMs = 500;
-$Monster::swimNoiseSpeed = 3;
+$Monster::swimNoiseSpeed = 3.5;
 function Monster__makeNoise(%this, %obj) {
-   schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
+   %obj.moveS = schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
    if(VectorLen(%obj.getVelocity()) > $Monster::swimNoiseSpeed) {
       postEvent(Monster, Swim, %obj.getPosition());
    }
@@ -104,7 +106,11 @@ function Monster::onAdd(%this, %obj) {
    subscribe(%obj, Monster, Attack);
    subscribe(%obj, Monster, Bubble);
    subscribe(%obj, Monster, Swim);
-   schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
+   %obj.moveS = schedule($Monster::swimNoiseMs, %this, Monster__makeNoise, %this, %obj);
+}
+
+function Monster::onRemove(%this, %obj) {
+   cancel(%obj.moveS);
 }
 
 function Monster::onMonsterAttack(%this, %obj, %pos) {
@@ -112,7 +118,7 @@ function Monster::onMonsterAttack(%this, %obj, %pos) {
       datablock = DefaultNode;
       emitter = AttackRippleEmitter;
       active = true;
-      position = getWords(%obj.getPosition(), 0, 1) SPC 3.2;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 3.1;
    };
    %p.schedule(1000, delete, %p);
    GameGroup.add(%p);
@@ -130,7 +136,7 @@ function Monster::onMonsterAttack(%this, %obj, %pos) {
       datablock = DefaultNode;
       emitter = AttackJetEmitter;
       active = true;
-      position = getWords(%obj.getPosition(), 0, 1) SPC 2.5;
+      position = getWords(%obj.getPosition(), 0, 1) SPC 2.8;
    };
    %p.schedule(300, delete, %p);
    GameGroup.add(%p);
@@ -167,16 +173,22 @@ function Monster::onMonsterSwim(%this, %obj, %pos) {
    GameGroup.add(%p);
 }
 
+function Person::onReachPathDestination(%this, %obj) {
+   %obj.onEvent(reachDestination);
+}
+
 function Person::onMonsterAttack(%this, %obj, %pos) {
    %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
    %p2 = getWords(%pos, 0, 1) SPC 0;
    %d = VectorLen(VectorSub(%p1, %p2));
    if(%d < 5) {
-      postEvent(Tourist, Eaten, %obj.getPosition());
+      %obj.eaten = true;
       %obj.schedule(750, delete, %obj);
+      postEvent(Tourist, Eaten, %obj.getPosition());
+      %obj.onEvent(attackNear);
    } else if(%d < 30) {
       %obj.onEvent(attackNear);
-   } else if(%d < 50) {
+   } else if(%d < 60) {
       %obj.onEvent(attackFar);
    }
 }
@@ -185,16 +197,16 @@ function Person::onMonsterBubble(%this, %obj, %pos) {
    %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
    %p2 = getWords(%pos, 0, 1) SPC 0;
    %d = VectorLen(VectorSub(%p1, %p2));
-   if(%d < 10) {
+   if(%d < 20) {
       %obj.increaseDetection(3);
-   } else if(%d < 25) {
+   } else if(%d < 40) {
       %obj.increaseDetection(2);
    }
 }
 
 function Person::onMonsterSwim(%this, %obj, %pos) {
    %p1 = getWords(%obj.getPosition(), 0, 1) SPC 0;
-   %p2 = getWords(TheMonster.getPosition(), 0, 1) SPC 0;
+   %p2 = getWords(%pos, 0, 1) SPC 0;
    %d = VectorLen(VectorSub(%p1, %p2));
    if(%d < 10) {
       %obj.increaseDetection(1);

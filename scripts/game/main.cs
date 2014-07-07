@@ -1,15 +1,17 @@
+exec("scripts/console/main.cs");
 exec("scripts/metrics/main.cs");
 exec("scripts/profiling/main.cs");
-exec("scripts/console/main.cs");
 
-exec("./playGui.gui");
 exec("./materials.cs");
 exec("./datablocks.cs");
 exec("./ai.cs");
 
+exec("./playGui.gui");
+exec("./helpGui.gui");
+exec("./endGameGui.gui");
+
 $pref::PSSM::smallestVisiblePixelSize = 10;
 $pref::Shadows::filterMode = "SoftShadowHighQuality";
-$enableDirectInput = true;
 
 //-----------------------------------------------------------------------------
 // Called when all datablocks have been transmitted.
@@ -36,6 +38,7 @@ function GameConnection::onEnterGame(%this) {
 
    //PlayGui.noCursor = true;
    Canvas.setContent(PlayGui);
+   $enableDirectInput = true;
    activateDirectInput();
 
    setupControls();
@@ -59,6 +62,9 @@ function setupControls() {
    MoveMap.bind("keyboard", "lcontrol", bubble);
    MoveMap.bind("keyboard", "lshift", creep);
 
+   MoveMap.bind("keyboard", "h", toggleHelp);
+   MoveMap.bind("keyboard", "p", endGame);
+
    MoveMap.bind("gamepad", "btn_a", attack);
    MoveMap.bind("gamepad", "btn_b", bubble);
    MoveMap.bind("gamepad", "btn_x", creep);
@@ -67,11 +73,11 @@ function setupControls() {
 
    $MovementHz = 50;
    $MovementMillis = 1000 / $MovementHz;
-   schedule($MovementMillis, 0, movementSchedule);
+   $moveSchedule = schedule($MovementMillis, 0, movementSchedule);
 }
 
 function movementSchedule() {
-   schedule($MovementMillis, 0, movementSchedule);
+   $moveSchedule = schedule($MovementMillis, 0, movementSchedule);
    updateMovement();
    updateCamera();
 }
@@ -114,7 +120,13 @@ function attack(%val) {
       %now = getSimTime();
       if(%now - $lastAttack > $attackCooldown) {
          $lastAttack = %now;
-         postEvent(Monster, Attack, TheMonster.getPosition());
+         %pos2 = getWords(TheMonster.getPosition(), 0, 1);
+         %start = %pos2 SPC 10;
+         %end = %pos2 SPC 3;
+         %ray = ContainerRayCast(%start, %end, $TypeMasks::StaticShapeObjectType);
+         if(!isObject(getWord(%ray, 0))) {
+            postEvent(Monster, Attack, TheMonster.getPosition());
+         }
       }
    }
 }
@@ -148,12 +160,20 @@ function getCameraAxes() {
 }
 
 //-----------------------------------------------------------------------------
+function toggleHelp(%val) {
+   if(%val) {
+      %help = PlayGui->Help;
+      %help.visible = !%help.visible;
+   }
+}
+
+//-----------------------------------------------------------------------------
 function onStart() {
    exec("./level.cs");
 
-   %numTourists = 10;
+   %numTourists = 30;
    for(%i = 0; %i < %numTourists; %i++) {
-      %spot = chooseTouristSpot();
+      %spot = chooseTouristSpot(%i);
       GameGroup.add(new AIPlayer() {
          datablock = Tourist;
          spot = getWord(%spot, 0);
@@ -161,21 +181,49 @@ function onStart() {
       });
    }
 
-   %numRangers = 1;
-   for(%i = 0; %i < %numRangers; %i++) {
-      %spot = chooseRangerSpot();
+   GameGroup.add(new SimSet(Rangers));
+   for(%i = 0; %i < $numRangerSpots; %i++) {
+      %pos = chooseGroundPos(getRecord($rangerSpots, %i));
       GameGroup.add(new AIPlayer() {
          datablock = Ranger;
-         spot = getWord(%spot, 0);
-         position = getWords(%spot, 1, 3);
+         spot = %i;
+         position = %pos;
       });
    }
 
-   GameGroup.add(Rangers);
+   $say::stuff = true;
 }
 
 //-----------------------------------------------------------------------------
+new ActionMap(EndMap);
+EndMap.bind(keyboard, enter, resetGame);
+
+function endGame(%val) {
+   if(%val) {
+      cancel($moveSchedule);
+      GameGroup.delete();
+      Canvas.setContent(EndGameGui);
+      MoveMap.pop();
+      MoveMap.delete();
+      EndMap.push();
+   }
+}
+
+function resetGame(%val) {
+   if(%val) {
+      EndMap.pop();
+      commandToServer('reset');
+   }
+}
+
+function serverCmdReset(%client) {
+   $say::stuff = false;
+   onStart();
+   %client.onEnterGame();
+}
+
 function onEnd() {
    MoveMap.delete();
+   EndMap.delete();
    GameGroup.delete();
 }

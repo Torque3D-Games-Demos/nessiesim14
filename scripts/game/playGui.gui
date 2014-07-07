@@ -1,35 +1,28 @@
 new GameTSCtrl(PlayGui) {
-   isContainer = "1";
-   profile = "GuiContentProfile";
-   horizSizing = "right";
-   vertSizing = "bottom";
+   isContainer = true;
+   profile = GuiContentProfile;
+   horizSizing = right;
+   vertSizing = bottom;
    position = "0 0";
    extent = "1024 768";
    minExtent = "8 8";
-   canSave = "1";
-   visible = "1";
+   visible = true;
    margin = "0 0 0 0";
    padding = "0 0 0 0";
-   anchorTop = "1";
-   anchorBottom = "0";
-   anchorLeft = "1";
-   anchorRight = "0";
-   cameraZRot = "0";
-   forceFOV = "0";
-   enabled = "1";
-   helpTag = "0";
+   enabled = true;
+
    new GuiShapeNameHud([Names]) {
-      visible = $prefs::debug;
+      visible = true;
       profile = GuiDefaultProfile;
       extent = "1024 768";
-      horizSizing = "relative";
-      vertSizing = "relative";
+      horizSizing = relative;
+      vertSizing = relative;
       showFill = false;
       showFrame = false;
       labelFillColor = "Black";
       labelFrameColor = "White";
       showLabelFill = true;
-      showLabelFrame = true;
+      showLabelFrame = false;
       textColor = "White";
    };
 };
