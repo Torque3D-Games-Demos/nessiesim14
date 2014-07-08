@@ -30,4 +30,4 @@ To turn on shadows and nicer water, edit **prefs.cs**.
 
  * Nessie photo from [wikipedia](http://en.wikipedia.org/wiki/Loch_Ness_Monster#mediaviewer/File:Hoaxed_photo_of_the_Loch_Ness_monster.jpg)
  * Ideas and help from the #GarageGames IRC channel
- * Using [Torque 3D](http://torque3d.org) by GarageGames
+ * Using [Torque 3D](http://torque3d.org) by GarageGames and based on my own [t3d-bones](https://github.com/eightyeight/t3d-bones)
